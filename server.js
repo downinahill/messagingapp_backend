@@ -11,7 +11,7 @@ const cors = require('cors')
 const session = require('express-session')
 
 /* PORT */
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3003;
 
 /* == Express Instance == */
 const app = express();
@@ -24,7 +24,7 @@ require('./config/db.connection');
 
 /* == middlewares == */
 // Setup Cors middleware
-const whitelist = ['http://localhost:3000']
+const whitelist = ['http://localhost:9000']
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -82,9 +82,10 @@ app.get('/', function (req, res) {
 
 
 app.use('/users', routes.users)
+app.use('/post', routes.post)
 
 
 /* == Server Bind == */
-app.listen(PORT, () => {
+app.listen(PORT, (req, res) => {
     console.log(`🎉🎊 celebrations happening on http://localhost:${PORT} 🎉🎊`);
 });

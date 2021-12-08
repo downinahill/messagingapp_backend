@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 // === Connection string ===
 const connectionStr = process.env.MONGODBURI || 'mongodb://localhost:27017/messaging'
 
-// Set up out connection
+// Set up our connection
 
 mongoose.connect(connectionStr, {
     useNewUrlParser: true,

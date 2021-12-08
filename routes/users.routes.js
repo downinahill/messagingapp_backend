@@ -4,7 +4,7 @@ const router = express.Router();
 /* == CTRLS == */
 const ctrls = require('../controllers');
 
-/* http://localhost:3003/users */
+/* http://localhost:3000/users */
 
 router.post('/signup', ctrls.users.signup);
 router.post('/login', ctrls.users.login);

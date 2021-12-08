@@ -19,12 +19,13 @@ const app = express();
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 
+
 /* == DB connection == */
 require('./config/db.connection');
 
 /* == middlewares == */
 // Setup Cors middleware
-const whitelist = ['http://localhost:9000']
+const whitelist = ['http://localhost:3000', process.env.HEROKUFRONTURL]
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) {
@@ -58,6 +59,41 @@ app.use(session({
 }))
 
 
+const Pusher = require("pusher");
+
+const pusher = new Pusher({
+  appId: "1310853",
+  key: "9b5fb9e2d4497d2f068a",
+  secret: "80e02950041bcc838571",
+  cluster: "mt1",
+  useTLS: true
+});
+
+pusher.trigger("my-channel", "my-event", {
+  message: "hello world"
+});
+
+let channel = pusher.subscribe(myChannel);
+const db = mongoose.connectionStrdb.once("open", () => {
+    console.log("DB Connected");
+    const msgCollection = db.collection("messagingmesages")
+    const changeStream =msgCollection.watch()
+    changeStream.on('change', change => {
+        console.log(change))
+        if(change.operationType === "insert") {
+            const messageDetails = change.fullDocumentation
+            pusher.trigger("messages", "inserted", {
+                name: messageDetails.name,
+                message: messageDetails.message,
+                timestamp: messageDetails.timestamp,
+                received: messageDetails.received
+            })
+        } else {
+            console.log('Error triggering Pusher')
+        }
+    })
+
+
 // what we had before deployment, for reference
 // app.use(session({
 //   secret: "asdffjk",
@@ -80,6 +116,28 @@ app.get('/', function (req, res) {
     res.send('hello')
 })
 
+app.post('/messages/new', (req, res) => {
+    const dbMessage = req.body
+    Messages.create(dbMessage, (err, data) => {
+        if(err)
+            res.status(500).send(err)
+        else
+            res.status(201).send(data)
+    })
+
+})
+
+
+app.get('/messages/sync', (req,res) => {
+    Messages.find((err, data) => {
+        if(err) {
+            res.status(500).send(err)
+
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
 
 app.use('/users', routes.users)
 app.use('/post', routes.post)

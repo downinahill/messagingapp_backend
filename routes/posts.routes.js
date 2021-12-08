@@ -4,7 +4,7 @@ const router = express.Router();
 /* == CTRLS == */
 const ctrls = require('../controllers');
 
-/* http://localhost:3003/holidays */
+/* http://localhost:3000 */
 
 router.get('/', ctrls.posts.index);
 router.post('/', ctrls.posts.create);

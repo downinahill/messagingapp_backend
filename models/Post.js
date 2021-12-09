@@ -7,10 +7,6 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  celebrated: {
-    type: Boolean,
-    default: false
-  },
   description: {
     type: String,
     default: ''

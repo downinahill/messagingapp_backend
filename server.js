@@ -1,4 +1,3 @@
-
 /* == External  modules == */
 const express = require('express');
 
@@ -19,6 +18,7 @@ const app = express();
 const MongoDBStore = require('connect-mongodb-session')(session)
 
 
+const Messages = require('./models/dbMessages.js')
 
 /* == DB connection == */
 require('./config/db.connection');
@@ -62,36 +62,20 @@ app.use(session({
 const Pusher = require("pusher");
 
 const pusher = new Pusher({
-  appId: "1310853",
-  key: "9b5fb9e2d4497d2f068a",
-  secret: "80e02950041bcc838571",
-  cluster: "mt1",
-  useTLS: true
+    appId: "1310853",
+    key: "9b5fb9e2d4497d2f068a",
+    secret: "80e02950041bcc838571",
+    cluster: "mt1",
+    useTLS: true
 });
 
 pusher.trigger("my-channel", "my-event", {
-  message: "hello world"
+    message: "hello world"
 });
 
-let channel = pusher.subscribe(myChannel);
-const db = mongoose.connectionStrdb.once("open", () => {
-    console.log("DB Connected");
-    const msgCollection = db.collection("messagingmesages")
-    const changeStream =msgCollection.watch()
-    changeStream.on('change', change => {
-        console.log(change))
-        if(change.operationType === "insert") {
-            const messageDetails = change.fullDocumentation
-            pusher.trigger("messages", "inserted", {
-                name: messageDetails.name,
-                message: messageDetails.message,
-                timestamp: messageDetails.timestamp,
-                received: messageDetails.received
-            })
-        } else {
-            console.log('Error triggering Pusher')
-        }
-    })
+
+
+
 
 
 // what we had before deployment, for reference
@@ -119,7 +103,7 @@ app.get('/', function (req, res) {
 app.post('/messages/new', (req, res) => {
     const dbMessage = req.body
     Messages.create(dbMessage, (err, data) => {
-        if(err)
+        if (err)
             res.status(500).send(err)
         else
             res.status(201).send(data)
@@ -128,9 +112,9 @@ app.post('/messages/new', (req, res) => {
 })
 
 
-app.get('/messages/sync', (req,res) => {
+app.get('/messages/sync', (req, res) => {
     Messages.find((err, data) => {
-        if(err) {
+        if (err) {
             res.status(500).send(err)
 
         } else {
@@ -138,6 +122,9 @@ app.get('/messages/sync', (req,res) => {
         }
     })
 })
+
+
+
 
 app.use('/users', routes.users)
 app.use('/post', routes.post)

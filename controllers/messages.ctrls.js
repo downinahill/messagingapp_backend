@@ -2,7 +2,7 @@ const db = require('../models')
 
 
 const index = (req, res) => {
-    db.Post.find({}, (error, posts) => {
+    db.Messages.find({}, (error, messages) => {
         if (error) return res.status(400).json({ error: error.message })
         res.status(200).json(posts)
     })
@@ -13,10 +13,10 @@ const index = (req, res) => {
 //create
 const create = (req, res) => {
     console.log(req.body)
-    db.Post.create(req.body, (error, createdPost) => {
+    db.Messages.create(req.body, (error, createdMessages) => {
         if(error) return res.status(400).json({ error: error.message })
 
-        return res.status(201).json(createdPost)
+        return res.status(201).json(createdMessages)
     })
 
 }
@@ -25,16 +25,16 @@ const create = (req, res) => {
 // update
 const update = (req, res) => {
     console.log(req.body)
-    db.Post.findByIdAndUpdate(
+    db.Messages.findByIdAndUpdate(
         req.params.id,
         req.body,
         {
             new: true,
         },
-        (error, updatedPost) => {
+        (error, updatedMessage) => {
             if (error) return res.status(400).json({ error: error.message })
 
-            return res.status(200).json(updatedPost)
+            return res.status(200).json(updatedMesssage)
 
         
         }
@@ -45,10 +45,10 @@ const update = (req, res) => {
 
 // delete
 const destroy = (req, res) => {
-    db.Post.findByIdAndDelete(req.params.id, (error, deletedPost) => {
+    db.Messages.findByIdAndDelete(req.params.id, (error, deletedMessages) => {
         if (error) return res.status(400).json({ error: error.message })
         return res.status(200).json({
-            message:`Post ${deletedPost.name} deleted successfully.`
+            message:`Message ${deletedMessages.name} deleted successfully.`
         })
     })}
 

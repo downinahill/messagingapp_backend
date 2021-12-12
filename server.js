@@ -123,6 +123,30 @@ app.get('/messages/sync', (req, res) => {
     })
 })
 
+app.put('/:id', (req, res) => {
+    res.send('Update post ' + req.params.id)
+    Messages.findByIdAndUpdate((err, data) => {
+        if (err) {
+            res.status(500).send(err)
+        } else {
+            res.status(200).send(data)
+        }
+    })
+})
+
+app.delete('/messages/:id', (req, res) => {
+    console.log(req.params.id)
+    Messages.findByIdAndDelete(req.params.id, (error, deletedMessage) => {
+        console.log(deletedMessage)
+        res.json({
+            status: 200,
+            message: "Delete Successful"
+        })
+    }) 
+       
+    })
+
+
 
 
 
